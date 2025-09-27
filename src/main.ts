@@ -22,7 +22,12 @@ const vuetify = createVuetify({
   },
 })
 
-createApp(App)
-  .use(router)
-  .use(vuetify)
-  .mount('#app')
+async function bootstrap() {
+  const resolvedRouter = await router;
+  createApp(App)
+    .use(resolvedRouter)
+    .use(vuetify)
+    .mount('#app')
+}
+
+bootstrap();

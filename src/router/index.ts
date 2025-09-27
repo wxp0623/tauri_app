@@ -1,21 +1,66 @@
-import { createRouter, createWebHistory } from 'vue-router'
+import type { AnymatchFn } from 'vite';
+import { createRouter, createWebHistory, type RouteRecordRaw, type RouteMeta, type Router } from 'vue-router'
 
-// 自动导入 views 目录下所有 vue 文件
-const modules = import.meta.glob('@/views/*.vue')
+export type ViewMeta = RouteMeta & {
+  title?: string;
+  icon?: string;
+  Name?: string;
+  description?: string;
+  [key: string]: any;
+}
 
-// 自动生成路由
-const routes = Object.keys(modules).map((path) => {
-  // 获取文件名作为路由 path
-  const name = path.match(/\/([^\/]+)\.vue$/)?.[1] || 'home'
-  return {
-    path: name.toLowerCase() === 'home' ? '/' : `/${name.toLowerCase()}`,
-    component: modules[path],
-  }
-})
+export type RouteItem = RouteRecordRaw & {
+  name: string
+  path: string
+  component?: any;
+  children?: RouteItem[]
+  meta?: ViewMeta;
+  props?: any
+  beforeEnter?: any
+  afterEnter?: any
+  beforeLeave?: any
+  afterLeave?: AnymatchFn
+  directTo: (router: Router) => void;
+}
 
-const router = createRouter({
-  history: createWebHistory(),
-  routes,
-})
+// 推荐用绝对路径 glob
+const modules = import.meta.glob('/src/views/*.vue')
 
-export default router
+// 动态生成路由
+const routesPromise = Promise.all(
+  Object.keys(modules).map(async (path) => {
+    const mod = await modules[path]()
+    console.log("mod", mod);
+    
+    const name = path.match(/\/([^\/]+)\.vue$/)?.[1] || 'home';
+    const modTyped = mod as { meta: ViewMeta };
+    const routePath = name === "Home" ? "/" : `/${name.toLowerCase()}`;
+    RouteUtil[name] = {
+      name,
+      path: routePath,
+      component: modules[path],
+      meta: modTyped.meta,
+      directTo: (router: Router) => {
+        router.push(routePath);
+      }
+    };
+    return RouteUtil[name]
+  })
+);
+export const RouteList: RouteItem[] = [];
+
+export const RouteUtil: { [key: string]: RouteItem } = {};
+
+routesPromise.then((routes) => {
+  RouteList.push(...routes );
+  return RouteUtil;
+
+});
+
+
+export default routesPromise.then((routes) => {
+  return createRouter({
+    history: createWebHistory(),
+    routes,
+  });
+});

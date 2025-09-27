@@ -8,10 +8,16 @@ export {}
 /* prettier-ignore */
 declare module 'vue' {
   export interface GlobalComponents {
+    CDatePicker: typeof import('./components/CDatePicker.vue')['default']
+    CDialog: typeof import('./components/CDialog.vue')['default']
     CSpace: typeof import('./components/CSpace.vue')['default']
+    GlobalDialog: typeof import('./components/GlobalDialog.vue')['default']
     Layout: typeof import('./components/Layout.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
     Sidebar: typeof import('./components/Sidebar.vue')['default']
+    VButton: typeof import('vuetify/lib')['VButton']
+    VDateInput: typeof import('vuetify/lib')['VDateInput']
+    ViewContainer: typeof import('./components/ViewContainer.vue')['default']
   }
 }

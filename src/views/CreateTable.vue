@@ -134,6 +134,16 @@
   </v-container>
 </template>
 
+<script lang="ts">
+import type { ViewMeta } from "../router";
+export const meta: ViewMeta = {
+  title: "创建数据表",
+  icon: "mdi-database-plus",
+  Name: "CreateTable",
+  showInMenu: true,
+};
+</script>
+
 <script setup lang="ts">
 import { useCreateTable } from "./CreateTable";
 import CSpace from "../components/CSpace.vue";

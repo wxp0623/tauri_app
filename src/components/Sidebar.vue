@@ -45,6 +45,6 @@ const {
   rail, 
   menus,  
   onMenuClick
-} = useSidebar();
+} =  useSidebar();
 
 </script>

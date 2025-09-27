@@ -1,21 +1,21 @@
-import { ref } from "vue";
-import { useRouter } from "vue-router";
+import { ref, effect } from "vue";
+import { RouteUtil, RouteList, type ViewMeta, type RouteItem } from "../router";
+import BaseView from "./BaseView";
 
-export function useSidebar() {
+
+export  function useSidebar() {
+  const viewBase = new BaseView();
+
   const drawer = ref(true);
   const rail = ref(false);
-  const router = useRouter();
 
-  const menus = [
-    { title: "首页", icon: "mdi-home", path: "/" },
-    { title: "创建", icon: "mdi-plus-box", path: "/create" },
-    // 你可以根据需要添加更多菜单项
-  ];
+  const menus: ViewMeta[] = RouteList
+  .map((route: RouteItem) => route.meta)
+  .filter((meta): meta is ViewMeta => Boolean(meta) && (meta as ViewMeta).showInMenu);
 
-  function onMenuClick(menu: { title: string; icon: string; path: string }) {
-    console.log("菜单点击:", menu);
+  function onMenuClick(menu: ViewMeta) {
     // 这里可以做路由跳转或其他逻辑
-    router.push(menu.path);
+    viewBase.Redirect(RouteUtil[menu.Name || "Home"]);
   }
   return {
     drawer,
